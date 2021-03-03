@@ -8,8 +8,8 @@
         public string ScreenSurfaceType { get; set; }
         public string IsTouchable { get; set; }
         public string ProcessorName { get; set; }
-        public int? NumberOfPhysicalCores { get; set; }
-        public int? Frequency { get; set; }
+        public string NumberOfPhysicalCores { get; set; }
+        public string Frequency { get; set; }
         public string Ram { get; set; }
         public string DiskSize { get; set; }
         public string DiskType { get; set; }

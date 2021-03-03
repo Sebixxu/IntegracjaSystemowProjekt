@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IntegracjaSystemowProjekt.BusinessLogic;
 using IntegracjaSystemowProjekt.Models;
+using ISP.DataAccess;
 
 namespace IntegracjaSystemowProjekt
 {
@@ -12,7 +13,7 @@ namespace IntegracjaSystemowProjekt
     {
         static void Main(string[] args)
         {
-            var records = FileAccess.ReadFile();
+            var records = DataAccess.GetFileData().ToList();
 
             var groupsCount = records.GroupBy(x => x.ManufacturerName).Select(group => new
             {
@@ -20,11 +21,12 @@ namespace IntegracjaSystemowProjekt
                 Count = group.Count()
             });
 
-
-            Table tbl = new Table("Lp.", ColumnNames.ManufacturerNameColumnName, ColumnNames.ScreenDiagonalColumnName, ColumnNames.ResolutionColumnName,
-                ColumnNames.ScreenSurfaceTypeColumnName, ColumnNames.IsTouchableColumnName, ColumnNames.ProcessorNameColumnName, ColumnNames.NumberOfPhysicalCoresColumnName,
-                ColumnNames.FrequencyColumnName, ColumnNames.RamColumnName, ColumnNames.DiskSizeColumnName, ColumnNames.DiskTypeColumnName, ColumnNames.GpuColumnName,
-                ColumnNames.VramColumnName, ColumnNames.OsColumnName, ColumnNames.DriveColumnName);
+            Table tbl = new Table("Lp.", Resources.Resource.ManufacturerNameColumnName, Resources.Resource.ScreenDiagonalColumnName, 
+                Resources.Resource.ResolutionColumnName, Resources.Resource.ScreenSurfaceTypeColumnName, Resources.Resource.IsTouchableColumnName, 
+                Resources.Resource.ProcessorNameColumnName, Resources.Resource.NumberOfPhysicalCoresColumnName, Resources.Resource.FrequencyColumnName, 
+                Resources.Resource.RamColumnName, Resources.Resource.DiskSizeColumnName, Resources.Resource.DiskTypeColumnName, Resources.Resource.GpuColumnName, 
+                Resources.Resource.VramColumnName, Resources.Resource.OsColumnName, Resources.Resource.DriveColumnName);
+            Table tbl2 = new Table(Resources.Resource.ManufacturerNameColumnName, Resources.Resource.NumberOfDevices);
 
             foreach (var record in records.Select((value, i) => new { i, value }))
             {
@@ -33,13 +35,10 @@ namespace IntegracjaSystemowProjekt
                     record.value.DiskType, record.value.Gpu, record.value.Vram, record.value.Os, record.value.Drive);
             }
 
-            tbl.Print();
-
-            Table tbl2 = new Table("Producent", "Liczba laptopów");
-
             foreach (var group in groupsCount)
                 tbl2.AddRow(group.GroupKey, group.Count);
 
+            tbl.Print();
 
             tbl2.Print();
 

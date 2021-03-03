@@ -5,11 +5,11 @@ using IntegracjaSystemowProjekt.Models;
 
 namespace IntegracjaSystemowProjekt.BusinessLogic
 {
-    public static class FileAccess
+    public class FileAccess
     {
         private const string filePath = "katalog.txt";
 
-        public static IList<Record> ReadFile()
+        public IList<Record> ReadFile()
         {
             IList<Record> records = new List<Record>();
 
@@ -21,7 +21,7 @@ namespace IntegracjaSystemowProjekt.BusinessLogic
             return records;
         }
 
-        private static Record MapValues(string[] line)
+        private Record MapValues(string[] line)
         {
             var record = new Record
             {
@@ -31,8 +31,8 @@ namespace IntegracjaSystemowProjekt.BusinessLogic
                 ScreenSurfaceType = line[3],
                 IsTouchable = line[4],
                 ProcessorName = line[5],
-                NumberOfPhysicalCores = TryParseInt(line[6]),
-                Frequency = TryParseInt(line[7]),
+                NumberOfPhysicalCores = line[6],
+                Frequency = line[7],
                 Ram = line[8],
                 DiskSize = line[9],
                 DiskType = line[10],
@@ -43,14 +43,6 @@ namespace IntegracjaSystemowProjekt.BusinessLogic
             };
 
             return record;
-        }
-
-        private static int? TryParseInt(string value)
-        {
-            if (int.TryParse(value, out var result))
-                return result;
-
-            return null;
         }
     }
 }
