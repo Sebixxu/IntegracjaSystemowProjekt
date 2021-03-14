@@ -1,0 +1,23 @@
+﻿<Application x:Class="IntegracjaSystemowProjekt.WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:IntegracjaSystemowProjekt.WPF"
+>
+    <Application.Resources>
+         <ResourceDictionary>
+             <ControlTemplate x:Key="errorTemplate">
+                <Border BorderBrush="OrangeRed" BorderThickness="2">
+                    <DockPanel>
+                        <AdornedElementPlaceholder/>
+                        <TextBlock ToolTip="{Binding [0].ErrorContent}" Foreground="OrangeRed"></TextBlock>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+            <ResourceDictionary.MergedDictionaries>
+                 <ResourceDictionary>
+                    <local:Bootstrapper x:Key="Bootstrapper" />
+                 </ResourceDictionary>
+             </ResourceDictionary.MergedDictionaries>
+         </ResourceDictionary>
+    </Application.Resources>
+</Application>

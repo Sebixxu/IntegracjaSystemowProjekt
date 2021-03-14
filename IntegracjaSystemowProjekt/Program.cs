@@ -13,7 +13,7 @@ namespace IntegracjaSystemowProjekt
     {
         static void Main(string[] args)
         {
-            var records = DataAccess.GetFileData().ToList();
+            var records = DataAccess.GetDefaultFileData().ToList();
 
             var groupsCount = records.GroupBy(x => x.ManufacturerName).Select(group => new
             {

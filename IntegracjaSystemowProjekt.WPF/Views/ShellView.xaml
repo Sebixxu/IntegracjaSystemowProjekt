@@ -1,0 +1,180 @@
+﻿<Window x:Class="IntegracjaSystemowProjekt.WPF.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:IntegracjaSystemowProjekt"
+        xmlns:converters="clr-namespace:IntegracjaSystemowProjekt.WPF.FormatConverters"
+        mc:Ignorable="d" FontSize="18"
+        Title="Lab2 - Sebastian Tomczak" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
+
+    <Window.Resources>
+        <converters:IntConverter x:Key="IntConverter"></converters:IntConverter>
+    </Window.Resources>
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Button Grid.Row="1" Grid.Column="1" Margin="5" x:Name="OpenFileDialog">Wczytaj dane z pliku</Button>
+                <Button Grid.Row="1" Grid.Column="2" Margin="5" x:Name="SaveDataToFile" >Zapisz dane do pliku</Button>
+            </Grid>
+            <DataGrid x:Name="Records" CanUserAddRows="False"
+                  AutoGenerateColumns="False" CanUserResizeColumns="False" 
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Nazwa producenta" Width="160">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding ManufacturerName, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Przekątna ekranu" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding ScreenDiagonal, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Rozdzielczość" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding Resolution, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Rodzaj powierzchni ekranu" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding ScreenSurfaceType, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Czy ekran jest dotykowy?" Width="210">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsTouchable, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </CheckBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Nazwa procesora" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding ProcessorName, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Liczba rdzeni fizycznych" Width="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding NumberOfPhysicalCores, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntConverter}}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}"
+                                     PreviewTextInput="UIElement_OnPreviewTextInput">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Prędkość taktowania MHz" Width="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Frequency, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}"
+                                     PreviewTextInput="UIElement_OnPreviewTextInput">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Wielkość pamięci RAM" Width="195">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Ram, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Pojemność dysku" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding DiskSize, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Rodzaj dysku" Width="115">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding DiskType, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Nazwa układu graficznego" Width="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Gpu, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Pamięć układu graficznego" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Vram, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Nazwa systemu operacyjnego" Width="250">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Os, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Rodzaj napędu fizycznego w komputerze" Width="335">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Drive, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

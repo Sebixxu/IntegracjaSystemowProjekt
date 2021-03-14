@@ -10,9 +10,16 @@ namespace ISP.DataAccess
 {
     public static class DataAccess
     {
-        public static IEnumerable<Record> GetFileData()
+        public static IEnumerable<Record> GetDefaultFileData()
         {
-            var records = new FileAccess().ReadFile();
+            var records = new FileAccess().ReadDefaultFile();
+
+            return records;
+        }
+
+        public static IEnumerable<Record> GetFileDataByPath(string path)
+        {
+            var records = new FileAccess().ReadFileByPath(path);
 
             return records;
         }
