@@ -13,6 +13,7 @@ using IntegracjaSystemowProjekt.WPF.Helpers;
 using IntegracjaSystemowProjekt.WPF.Models;
 using ISP.DataAccess;
 using Microsoft.Win32;
+using Screen = Caliburn.Micro.Screen;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace IntegracjaSystemowProjekt.WPF.ViewModels
@@ -35,7 +36,7 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             Records.AddRange(loadDefaultData);
         }
 
-        public void OpenFileDialog()
+        public void OpenTxtFileDialog()
         {
             MessageBox.Show("Na następnym oknie należy wybrać plik z odpowiednim formatem danych.", "Ostrzeżenie", MessageBoxButton.OK, MessageBoxImage.Warning);
 
@@ -51,7 +52,7 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
                 {
                     var path = openFileDialog.FileName;
 
-                    var records = DataAccess.GetFileDataByPath(path);
+                    var records = DataAccess.GetTxtFileDataByPath(path);
 
                     Records.Clear();
                     Records.AddRange(ValueHelper.MapValues(records));
@@ -61,7 +62,7 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
         }
 
-        public void SaveDataToFile()
+        public void SaveDataToTxtFile()
         {
             if (Errors.Any(x => x.Value > 0))
             {
@@ -86,37 +87,113 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
         }
 
+        public void OpenXmlFileDialog()
+        {
+            MessageBox.Show("Na następnym oknie należy wybrać plik z odpowiednim formatem danych.", "Ostrzeżenie", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Wybierz plik do odczytania",
+                Filter = "Text Document (*.xml) | *.xml"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (openFileDialog.CheckFileExists)
+                {
+                    var path = openFileDialog.FileName;
+
+                    var records = DataAccess.GetXmlFileDataByPath(path);
+
+                    Records.Clear();
+                    Records.AddRange(ValueHelper.MapValues(records));
+
+                    MessageBox.Show("Wskazany plik został wczytany.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
+        public void SaveDataToXmlFile()
+        {
+            if (Errors.Any(x => x.Value > 0))
+            {
+                MessageBox.Show("Znaleziono błędne dane, popraw je przed zapisem.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                var laptops = MapRecordToLaptops(Records);
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Zapisz plik",
+                    Filter = "Text Files(*.xml)|*.xml|All(*.*)|*"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    DataAccess.SaveXmlFile(laptops, saveFileDialog.FileName);
+
+                    MessageBox.Show("Pomyślnie zapisano plik.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
+        private Laptops MapRecordToLaptops(BindableCollection<RecordModel> recordModels)
+        {
+            var laptops = new Laptops { ModDate = DateTime.Now.ToString(), LaptopsCollection = new List<Laptop>() };
+
+            foreach (var recordModel in recordModels.Select((value, i) => new { i, value }))
+            {
+                laptops.LaptopsCollection.Add(new Laptop
+                {
+                    Disc = new Disc
+                    {
+                        Storage = recordModel.value.DiskSize,
+                        Type = recordModel.value.DiskType
+                    },
+                    DiscReader = recordModel.value.Drive,
+                    GraphicCard = new GraphicCard
+                    {
+                        Memory = recordModel.value.Vram,
+                        Name = recordModel.value.Gpu
+                    },
+                    Id = recordModel.i + 1,
+                    Manufacturer = recordModel.value.ManufacturerName,
+                    Os = recordModel.value.Os,
+                    Processor = new Processor
+                    {
+                        PhysicalCores = recordModel.value.NumberOfPhysicalCores,
+                        PhysicalCoresAsText = recordModel.value.NumberOfPhysicalCores?.ToString(),
+                        ClockSpeed = recordModel.value.Frequency,
+                        ClockSpeedAsText = recordModel.value.Frequency?.ToString(),
+                        Name = recordModel.value.ProcessorName
+                    },
+                    Ram = recordModel.value.Ram,
+                    Screen = new IntegracjaSystemowProjekt.Models.Screen
+                    {
+                        IsTouchable = ParseBoolToXmlString(recordModel.value.IsTouchable),
+                        Resolution = recordModel.value.Resolution,
+                        Size = recordModel.value.ScreenDiagonal,
+                        Type = recordModel.value.ScreenSurfaceType
+                    }
+                });
+            }
+
+            return laptops;
+        }
+
         private IEnumerable<RecordModel> LoadDefaultData()
         {
-            var records = DataAccess.GetDefaultFileData();
+            var records = DataAccess.GetDefaultTxtFileData();
 
             var recordModels = ValueHelper.MapValues(records);
 
             return recordModels;
         }
 
-
-
-        private bool ParseBoolValue(string value)
+        private string ParseBoolToXmlString(bool value)
         {
-            if (bool.TryParse(value, out var result))
-                return result;
-
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            if (value == "1" || value.ToLower() == "tak" || value.ToLower() == "yes")
-                return true;
-
-            return false;
-        }
-
-        private int? ParseIntValue(string value)
-        {
-            if (int.TryParse(value, out var result))
-                return result;
-
-            return null;
+            return value ? "yes" : "false";
         }
     }
 }

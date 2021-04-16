@@ -29,8 +29,10 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="1" Grid.Column="1" Margin="5" x:Name="OpenFileDialog">Wczytaj dane z pliku</Button>
-                <Button Grid.Row="1" Grid.Column="2" Margin="5" x:Name="SaveDataToFile" >Zapisz dane do pliku</Button>
+                <Button Grid.Row="1" Grid.Column="1" Margin="5" x:Name="OpenTxtFileDialog">Wczytaj dane z pliku .txt</Button>
+                <Button Grid.Row="1" Grid.Column="2" Margin="5" x:Name="SaveDataToTxtFile" >Zapisz dane do pliku .txt</Button>
+                <Button Grid.Row="1" Grid.Column="3" Margin="5" x:Name="OpenXmlFileDialog">Wczytaj dane z pliku .xml</Button>
+                <Button Grid.Row="1" Grid.Column="4" Margin="5" x:Name="SaveDataToXmlFile" >Zapisz dane do pliku .xml</Button>
             </Grid>
             <DataGrid x:Name="Records" CanUserAddRows="False"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" 
@@ -103,7 +105,7 @@
                     <DataGridTemplateColumn Header="Prędkość taktowania MHz" Width="220">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Frequency, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                                <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Frequency, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntConverter}}"
                                      Validation.ErrorTemplate="{StaticResource errorTemplate}"
                                      PreviewTextInput="UIElement_OnPreviewTextInput">
                                 </TextBox>

@@ -43,7 +43,13 @@
   <ItemGroup>
     <Compile Include="BusinessLogic\FileAccess.cs" />
     <Compile Include="DataAccess.cs" />
+    <Compile Include="Models\SubModels\Disc.cs" />
+    <Compile Include="Models\SubModels\GraphicCard.cs" />
+    <Compile Include="Models\Laptop.cs" />
+    <Compile Include="Models\Laptops.cs" />
+    <Compile Include="Models\SubModels\Processor.cs" />
     <Compile Include="Models\Record.cs" />
+    <Compile Include="Models\SubModels\Screen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

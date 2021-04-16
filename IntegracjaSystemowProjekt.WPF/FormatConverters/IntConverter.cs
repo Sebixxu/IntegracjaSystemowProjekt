@@ -23,6 +23,9 @@ namespace IntegracjaSystemowProjekt.WPF.FormatConverters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (string.IsNullOrWhiteSpace(value?.ToString()))
+                return null;
+
             return value?.ToString();
         }
     }
