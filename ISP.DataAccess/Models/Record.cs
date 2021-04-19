@@ -17,5 +17,17 @@
         public string Vram { get; set; }
         public string Os { get; set; }
         public string Drive { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is Record)) return false;
+
+            return ((Record)obj).ManufacturerName == this.ManufacturerName && ((Record)obj).ScreenDiagonal == this.ScreenDiagonal;
+        }
+
+        public override int GetHashCode()
+        {
+            return (this.ManufacturerName + this.ScreenDiagonal).GetHashCode();
+        }
     }
 }

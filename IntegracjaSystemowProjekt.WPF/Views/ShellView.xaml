@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:IntegracjaSystemowProjekt"
+        xmlns:VM="clr-namespace:IntegracjaSystemowProjekt.WPF.ViewModels"
         xmlns:converters="clr-namespace:IntegracjaSystemowProjekt.WPF.FormatConverters"
         mc:Ignorable="d" FontSize="18"
         Title="Lab2 - Sebastian Tomczak" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
-
+    <Window.DataContext>
+        <VM:ShellViewModel/>
+    </Window.DataContext>
     <Window.Resources>
         <converters:IntConverter x:Key="IntConverter"></converters:IntConverter>
     </Window.Resources>
@@ -28,11 +31,17 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Button Grid.Row="1" Grid.Column="1" Margin="5" x:Name="OpenTxtFileDialog">Wczytaj dane z pliku .txt</Button>
                 <Button Grid.Row="1" Grid.Column="2" Margin="5" x:Name="SaveDataToTxtFile" >Zapisz dane do pliku .txt</Button>
                 <Button Grid.Row="1" Grid.Column="3" Margin="5" x:Name="OpenXmlFileDialog">Wczytaj dane z pliku .xml</Button>
                 <Button Grid.Row="1" Grid.Column="4" Margin="5" x:Name="SaveDataToXmlFile" >Zapisz dane do pliku .xml</Button>
+                <Button Grid.Row="2" Grid.Column="1" Margin="5" x:Name="LoadDataFromDatabase">Wczytaj dane z bazy danych</Button>
+                <Button Grid.Row="2" Grid.Column="2" Margin="5" x:Name="SaveDataToDatabase" >Zapisz dane do bazy</Button>
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="5" IsReadOnly="True" Text="{Binding Path=NumberOfDuplicatesField}"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Margin="5" IsReadOnly="True" Text="{Binding Path=NumberOfNewRowsField}"/>
             </Grid>
             <DataGrid x:Name="Records" CanUserAddRows="False"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" 
@@ -42,7 +51,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding ManufacturerName, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -51,7 +60,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding ScreenDiagonal, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -60,7 +69,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding Resolution, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -69,7 +78,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding ScreenSurfaceType, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -78,7 +87,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsTouchable, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </CheckBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -87,7 +96,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap"  BorderThickness="0" Text="{Binding ProcessorName, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -96,7 +105,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding NumberOfPhysicalCores, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntConverter}}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}"
                                      PreviewTextInput="UIElement_OnPreviewTextInput">
                                 </TextBox>
                             </DataTemplate>
@@ -106,7 +115,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Frequency, TargetNullValue={x:Static sys:String.Empty}, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntConverter}}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}"
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}"
                                      PreviewTextInput="UIElement_OnPreviewTextInput">
                                 </TextBox>
                             </DataTemplate>
@@ -116,7 +125,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Ram, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -125,7 +134,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding DiskSize, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -134,7 +143,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding DiskType, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -143,7 +152,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Gpu, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -152,7 +161,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Vram, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -161,7 +170,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Os, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -170,7 +179,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox TextWrapping="Wrap" BorderThickness="0" Text="{Binding Drive, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
-                                     Validation.ErrorTemplate="{StaticResource errorTemplate}">
+                                     Validation.ErrorTemplate="{StaticResource errorTemplate}" Background="{Binding RecordColor}">
                                 </TextBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

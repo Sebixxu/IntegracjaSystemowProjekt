@@ -1,0 +1,18 @@
+﻿namespace ISP.DatabaseAccess.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class RenameLaptopsTable : DbMigration
+    {
+        public override void Up()
+        {
+            RenameTable(name: "dbo.Laptops", newName: "LaptopsDto");
+        }
+        
+        public override void Down()
+        {
+            RenameTable(name: "dbo.LaptopsDto", newName: "Laptops");
+        }
+    }
+}

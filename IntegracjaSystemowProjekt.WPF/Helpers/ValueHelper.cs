@@ -33,7 +33,7 @@ namespace IntegracjaSystemowProjekt.WPF.Helpers
             return recordModels;
         }
 
-        private static RecordModel MapValue(Record record)
+        public static RecordModel MapValue(Record record)
         {
             var recordModel = new RecordModel
             {
@@ -57,7 +57,7 @@ namespace IntegracjaSystemowProjekt.WPF.Helpers
             return recordModel;
         }
 
-        private static RecordModel MapValue(Laptop laptop)
+        public static RecordModel MapValue(Laptop laptop)
         {
             var recordModel = new RecordModel
             {

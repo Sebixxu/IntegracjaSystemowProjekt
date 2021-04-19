@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using IntegracjaSystemowProjekt.WPF.ViewModels;
 
 namespace IntegracjaSystemowProjekt.WPF.Views
 {
@@ -20,6 +21,7 @@ namespace IntegracjaSystemowProjekt.WPF.Views
     /// </summary>
     public partial class ShellView : Window
     {
+        public event EventHandler BeforeSearch;
         public ShellView()
         {
             InitializeComponent();
@@ -33,6 +35,18 @@ namespace IntegracjaSystemowProjekt.WPF.Views
         public static bool IsValid(string str)
         {
             return int.TryParse(str, out var i) && i >= 0;
+        }
+
+
+        public void ExecuteSearch()
+        {
+            BeforeSearch?.Invoke(null, EventArgs.Empty);
+        }
+
+        private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            //if(!ShellViewModel.IsInLoadingState)
+            //    CollectionViewSource.GetDefaultView(Records)?.Refresh();
         }
     }
 }
