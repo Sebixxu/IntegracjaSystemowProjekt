@@ -54,25 +54,9 @@
   <ItemGroup>
     <Compile Include="DataAccess\LaptopDbContext.cs" />
     <Compile Include="DataAccess\LaptopsDataAccess.cs" />
-    <Compile Include="Migrations\202104171138151_AddLaptopsTable.cs" />
-    <Compile Include="Migrations\202104171138151_AddLaptopsTable.designer.cs">
-      <DependentUpon>202104171138151_AddLaptopsTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202104171146366_NotNullcolumnsInLaptopsTable.cs" />
-    <Compile Include="Migrations\202104171146366_NotNullcolumnsInLaptopsTable.designer.cs">
-      <DependentUpon>202104171146366_NotNullcolumnsInLaptopsTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202104171150402_RenameLaptopsTable.cs" />
-    <Compile Include="Migrations\202104171150402_RenameLaptopsTable.designer.cs">
-      <DependentUpon>202104171150402_RenameLaptopsTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202104171151445_RenameLaptopsTable2.cs" />
-    <Compile Include="Migrations\202104171151445_RenameLaptopsTable2.designer.cs">
-      <DependentUpon>202104171151445_RenameLaptopsTable2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202104171254138_FixNullableInLaptopsTable.cs" />
-    <Compile Include="Migrations\202104171254138_FixNullableInLaptopsTable.designer.cs">
-      <DependentUpon>202104171254138_FixNullableInLaptopsTable.cs</DependentUpon>
+    <Compile Include="Migrations\202104191740316_AddLaptopsTable.cs" />
+    <Compile Include="Migrations\202104191740316_AddLaptopsTable.designer.cs">
+      <DependentUpon>202104191740316_AddLaptopsTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\LaptopsDto.cs" />
@@ -83,20 +67,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202104171138151_AddLaptopsTable.resx">
-      <DependentUpon>202104171138151_AddLaptopsTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202104171146366_NotNullcolumnsInLaptopsTable.resx">
-      <DependentUpon>202104171146366_NotNullcolumnsInLaptopsTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202104171150402_RenameLaptopsTable.resx">
-      <DependentUpon>202104171150402_RenameLaptopsTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202104171151445_RenameLaptopsTable2.resx">
-      <DependentUpon>202104171151445_RenameLaptopsTable2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202104171254138_FixNullableInLaptopsTable.resx">
-      <DependentUpon>202104171254138_FixNullableInLaptopsTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202104191740316_AddLaptopsTable.resx">
+      <DependentUpon>202104191740316_AddLaptopsTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

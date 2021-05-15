@@ -29,5 +29,47 @@ namespace ISP.DatabaseAccess
         public string Vram { get; set; }
         public string Os { get; set; }
         public string Drive { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is LaptopsDto)) return false;
+
+            return ((LaptopsDto)obj).ManufacturerName == this.ManufacturerName &&
+                   ((LaptopsDto)obj).ScreenDiagonal == this.ScreenDiagonal &&
+                   ((LaptopsDto)obj).Resolution == this.Resolution &&
+                   ((LaptopsDto)obj).ScreenSurfaceType == this.ScreenSurfaceType &&
+                   ((LaptopsDto)obj).IsTouchable == this.IsTouchable &&
+                   ((LaptopsDto)obj).ProcessorName == this.ProcessorName &&
+                   ((LaptopsDto)obj).NumberOfPhysicalCores == this.NumberOfPhysicalCores &&
+                   ((LaptopsDto)obj).Frequency == this.Frequency &&
+                   ((LaptopsDto)obj).Ram == this.Ram &&
+                   ((LaptopsDto)obj).DiskSize == this.DiskSize &&
+                   ((LaptopsDto)obj).DiskType == this.DiskType &&
+                   ((LaptopsDto)obj).Gpu == this.Gpu &&
+                   ((LaptopsDto)obj).Vram == this.Vram &&
+                   ((LaptopsDto)obj).Os == this.Os &&
+                   ((LaptopsDto)obj).Drive == this.Drive;
+        }
+
+        public override int GetHashCode()
+        {
+            return (this.ManufacturerName +
+                    this.ScreenDiagonal +
+                    this.Resolution +
+                    this.ScreenSurfaceType +
+                    this.IsTouchable +
+                    this.ProcessorName +
+                    this.NumberOfPhysicalCores +
+                    this.Frequency +
+                    this.Ram +
+                    this.DiskSize +
+                    this.DiskType +
+                    this.Gpu +
+                    this.Vram +
+                    this.Os +
+                    this.Drive
+                )
+                .GetHashCode();
+        }
     }
 }

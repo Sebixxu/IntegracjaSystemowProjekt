@@ -7,13 +7,13 @@ namespace ISP.DatabaseAccess.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class NotNullcolumnsInLaptopsTable : IMigrationMetadata
+    public sealed partial class AddLaptopsTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(NotNullcolumnsInLaptopsTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddLaptopsTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "202104171146366_NotNullcolumnsInLaptopsTable"; }
+            get { return "202104191740316_AddLaptopsTable"; }
         }
         
         string IMigrationMetadata.Source

@@ -8,7 +8,7 @@
         xmlns:VM="clr-namespace:IntegracjaSystemowProjekt.WPF.ViewModels"
         xmlns:converters="clr-namespace:IntegracjaSystemowProjekt.WPF.FormatConverters"
         mc:Ignorable="d" FontSize="18"
-        Title="Lab2 - Sebastian Tomczak" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
+        Title="ISP - Sebastian Tomczak" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
     <Window.DataContext>
         <VM:ShellViewModel/>
     </Window.DataContext>

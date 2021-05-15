@@ -85,7 +85,7 @@
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="FormatConverters\IntConverter.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
-    <Compile Include="Helpers\ValueHelper.cs" />
+    <Compile Include="Helpers\Mapper.cs" />
     <Compile Include="Models\ColorTemplates.cs" />
     <Compile Include="Models\RecordModel.cs" />
     <Compile Include="Models\RecordState.cs" />

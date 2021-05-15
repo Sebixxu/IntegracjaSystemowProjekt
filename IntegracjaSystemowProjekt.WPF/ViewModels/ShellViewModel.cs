@@ -74,7 +74,9 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
         {
             var loadDefaultData = LoadDefaultData().ToList();
 
-            AssignRecordsToGridFromTxt(loadDefaultData);
+            var duplicates = GetDuplicates(loadDefaultData);
+            var validatedRecordModels = GetValidatedData(loadDefaultData, duplicates);
+            SetDataWithDuplicatedInfo(validatedRecordModels);
 
             NotifyOfPropertyChange(() => Records);
 
@@ -100,8 +102,11 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
                     var path = openFileDialog.FileName;
 
                     var records = DataAccess.GetTxtFileDataByPath(path);
-                    CheckDuplicates(records);
-                    //AssignRecordsToGridFromTxt(records);
+                    var recordsList = records as Record[] ?? records.ToArray();
+
+                    var duplicates = GetDuplicates(recordsList);
+                    var validatedRecordModels = GetValidatedData(recordsList, duplicates);
+                    SetDataWithDuplicatedInfo(validatedRecordModels);
 
                     MessageBox.Show("Wskazany plik został wczytany.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -110,9 +115,40 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             IsInLoadingState = false;
         }
 
-        private void CheckDuplicates(IEnumerable<Record> records)
+        private List<RecordModel> GetValidatedData(IEnumerable<Record> laptopsList, List<KeyValuePair<Record, int>> duplicated)
         {
-            Dictionary<Record, int> recordDictionary = new Dictionary<Record, int>();
+            List<RecordModel> recordModels = new List<RecordModel>();
+
+            foreach (var record in laptopsList)
+            {
+                var isDuplicate = duplicated.FirstOrDefault(x => Equals(x.Key, record)).Value > 1;
+
+                var currentRecordModel = Mapper.MapValue(record);
+
+                currentRecordModel.RecordState = isDuplicate ? RecordState.Duplicate : RecordState.Normal;
+                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
+
+                recordModels.Add(currentRecordModel);
+            }
+
+            return recordModels;
+        }
+
+        private void SetDataWithDuplicatedInfo(List<RecordModel> validatedRecordModels)
+        {
+            var newRowsCount = validatedRecordModels.Count(x => x.RecordState == RecordState.Normal);
+            var duplicateRowsCount = validatedRecordModels.Count(x => x.RecordState == RecordState.Duplicate);
+
+            NumberOfNewRowsField = string.Format(numberOfNewRowsFieldText, newRowsCount);
+            NumberOfDuplicatesField = string.Format(numberOfDuplicatesFieldText, duplicateRowsCount);
+
+            Records.Clear();
+            Records.AddRange(validatedRecordModels);
+        }
+
+        private List<KeyValuePair<T, int>> GetDuplicates<T>(IEnumerable<T> records) where T : class
+        {
+            Dictionary<T, int> recordDictionary = new Dictionary<T, int>();
 
             var recordsList = records.ToList();
             foreach (var record in recordsList)
@@ -128,55 +164,7 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
 
             var duplicated = recordDictionary.Where(x => x.Value > 1).ToList();
-
-            List<RecordModel> recordModels = new List<RecordModel>();
-
-            foreach (var record in recordsList)
-            {
-                var isDuplicate = duplicated.FirstOrDefault(x => Equals(x.Key, record)).Value > 1; 
-
-                var currentRecordModel = ValueHelper.MapValue(record);
-
-                currentRecordModel.RecordState = isDuplicate ? RecordState.Duplicate : RecordState.Normal;
-                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
-
-                recordModels.Add(currentRecordModel);
-            }
-
-            var newRowsCount = recordModels.Count(x => x.RecordState == RecordState.Normal);
-            var duplicateRowsCount = recordModels.Count(x => x.RecordState == RecordState.Duplicate);
-
-            NumberOfNewRowsField = string.Format(numberOfNewRowsFieldText, newRowsCount);
-            NumberOfDuplicatesField = string.Format(numberOfDuplicatesFieldText, duplicateRowsCount);
-
-            Records.Clear();
-            Records.AddRange(recordModels);
-        }
-
-        private void AssignRecordsToGridFromTxt(IEnumerable<Record> records)
-        {
-            List<RecordModel> recordModels = new List<RecordModel>();
-
-            foreach (var record in records)
-            {
-                var isDuplicatesFromTxtFile = CheckIsDuplicatesFromTxtFile(record);
-
-                var currentRecordModel = ValueHelper.MapValue(record);
-
-                currentRecordModel.RecordState = isDuplicatesFromTxtFile ? RecordState.Duplicate : RecordState.Normal;
-                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
-
-                recordModels.Add(currentRecordModel);
-            }
-
-            var newRowsCount = recordModels.Count(x => x.RecordState == RecordState.Normal);
-            var duplicateRowsCount = recordModels.Count(x => x.RecordState == RecordState.Duplicate);
-
-            NumberOfNewRowsField = string.Format(numberOfNewRowsFieldText, newRowsCount);
-            NumberOfDuplicatesField = string.Format(numberOfDuplicatesFieldText, duplicateRowsCount);
-
-            Records.Clear();
-            Records.AddRange(recordModels);
+            return duplicated;
         }
 
         private string AssignBackgroundColor(RecordState recordState)
@@ -188,81 +176,6 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
                 return ColorTemplates.ModifiedRow;
 
             return ColorTemplates.NormalRow;
-        }
-
-        private bool CheckIsDuplicatesFromTxtFile(Record record)
-        {
-            var laptopsDto = new LaptopsDto
-            {
-                ScreenDiagonal = record.ScreenDiagonal,
-                Resolution = record.Resolution,
-                DiskSize = record.DiskSize,
-                ManufacturerName = record.ManufacturerName,
-                Ram = record.Ram,
-                Os = record.Os,
-                IsTouchable = record.IsTouchable.ParseBoolValue(),
-                Frequency = record.Frequency.ParseIntValue(),
-                DiskType = string.IsNullOrEmpty(record.DiskType) ? null : record.DiskType,
-                NumberOfPhysicalCores = record.NumberOfPhysicalCores.ParseIntValue(),
-                Gpu = record.Gpu,
-                Drive = record.Drive,
-                ScreenSurfaceType = record.ScreenSurfaceType,
-                Vram = record.Vram,
-                ProcessorName = record.ProcessorName
-            };
-
-            var isAlreadyExisting = LaptopsDataAccess.IsAlreadyExisting(laptopsDto);
-
-            return isAlreadyExisting;
-        }
-
-        private bool CheckIsDuplicate(RecordModel recordModel)
-        {
-            var isAlreadyExisting = LaptopsDataAccess.IsAlreadyExisting(new LaptopsDto
-            {
-                ScreenDiagonal = recordModel.ScreenDiagonal,
-                Resolution = recordModel.Resolution,
-                DiskSize = recordModel.DiskSize,
-                ManufacturerName = recordModel.ManufacturerName,
-                Ram = recordModel.Ram,
-                Os = recordModel.Os,
-                IsTouchable = recordModel.IsTouchable,
-                Frequency = recordModel.Frequency,
-                DiskType = recordModel.DiskType,
-                NumberOfPhysicalCores = recordModel.NumberOfPhysicalCores,
-                Gpu = recordModel.Gpu,
-                Drive = recordModel.Drive,
-                ScreenSurfaceType = recordModel.ScreenSurfaceType,
-                Vram = recordModel.Vram,
-                ProcessorName = recordModel.ProcessorName
-            });
-
-            return isAlreadyExisting;
-        }
-
-        private bool CheckIsDuplicatesFromXmlFile(Laptop laptop)
-        {
-            var laptopsDto = new LaptopsDto
-            {
-                ScreenDiagonal = laptop.Screen.Size,
-                Resolution = laptop.Screen.Resolution,
-                DiskSize = laptop.Disc.Storage,
-                ManufacturerName = laptop.Manufacturer,
-                Ram = laptop.Ram,
-                Os = laptop.Os,
-                IsTouchable = laptop.Screen.IsTouchable.ParseBoolValue(),
-                Frequency = laptop.Processor.ClockSpeedAsText.ParseIntValue(),
-                DiskType = string.IsNullOrEmpty(laptop.Disc.Type) ? null : laptop.Disc.Type,
-                NumberOfPhysicalCores = laptop.Processor.PhysicalCoresAsText.ParseIntValue(),
-                Gpu = laptop.GraphicCard.Name,
-                Drive = laptop.DiscReader,
-                ScreenSurfaceType = laptop.Screen.Type,
-                Vram = laptop.GraphicCard.Memory,
-                ProcessorName = laptop.Processor.Name
-            };
-            var isAlreadyExisting = LaptopsDataAccess.IsAlreadyExisting(laptopsDto);
-
-            return isAlreadyExisting;
         }
 
         public void SaveDataToTxtFile()
@@ -309,39 +222,16 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
                     var path = openFileDialog.FileName;
 
                     var records = DataAccess.GetXmlFileDataByPath(path);
-                    AssignRecordsToGridFromXml(records);
-                    
+
+                    var duplicates = GetDuplicates(records.LaptopsCollection);
+                    var validatedRecordModels = GetValidatedData(records.LaptopsCollection, duplicates);
+                    SetDataWithDuplicatedInfo(validatedRecordModels);
+
                     MessageBox.Show("Wskazany plik został wczytany.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
 
             IsInLoadingState = false;
-        }
-
-        private void AssignRecordsToGridFromXml(Laptops laptops)
-        {
-            List<RecordModel> recordModels = new List<RecordModel>();
-
-            foreach (var laptop in laptops.LaptopsCollection)
-            {
-                var isDuplicatesFromTxtFile = CheckIsDuplicatesFromXmlFile(laptop);
-
-                var currentRecordModel = ValueHelper.MapValue(laptop);
-
-                currentRecordModel.RecordState = isDuplicatesFromTxtFile ? RecordState.Duplicate : RecordState.Normal;
-                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
-
-                recordModels.Add(currentRecordModel);
-            }
-
-            var newRowsCount = recordModels.Count(x => x.RecordState == RecordState.Normal);
-            var duplicateRowsCount = recordModels.Count(x => x.RecordState == RecordState.Duplicate);
-
-            NumberOfNewRowsField = string.Format(numberOfNewRowsFieldText, newRowsCount);
-            NumberOfDuplicatesField = string.Format(numberOfDuplicatesFieldText, duplicateRowsCount);
-
-            Records.Clear();
-            Records.AddRange(recordModels);
         }
 
         public void SaveDataToXmlFile()
@@ -352,7 +242,7 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
             else
             {
-                var laptops = MapRecordToLaptops(Records);
+                var laptops = Mapper.MapRecordToLaptops(Records);
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
@@ -369,15 +259,32 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
         }
 
+        private List<RecordModel> GetValidatedData(IEnumerable<Laptop> laptopsList, List<KeyValuePair<Laptop, int>> duplicated)
+        {
+            List<RecordModel> recordModels = new List<RecordModel>();
+
+            foreach (var record in laptopsList)
+            {
+                var isDuplicate = duplicated.FirstOrDefault(x => Equals(x.Key, record)).Value > 1;
+
+                var currentRecordModel = Mapper.MapValue(record);
+
+                currentRecordModel.RecordState = isDuplicate ? RecordState.Duplicate : RecordState.Normal;
+                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
+
+                recordModels.Add(currentRecordModel);
+            }
+
+            return recordModels;
+        }
+
         public void LoadDataFromDatabase()
         {
-            var laptopsDtos = LaptopsDataAccess.GetLaptops();
+            var laptopsDtos = LaptopsDataAccess.GetLaptops().ToList();
 
-            NumberOfNewRowsField = "Aktualnie prezentowane dane z bazy";
-            NumberOfDuplicatesField = "Aktualnie prezentowane dane z bazy";
-
-            Records.Clear();
-            Records.AddRange(MapLaptopsDtoToRecords(laptopsDtos));
+            var duplicates = GetDuplicates(laptopsDtos);
+            var validatedRecordModels = GetValidatedData(laptopsDtos, duplicates);
+            SetDataWithDuplicatedInfo(validatedRecordModels);
         }
 
         public void SaveDataToDatabase()
@@ -388,121 +295,31 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             }
             else
             {
-                foreach (var recordModel in Records)
-                {
-                    var isDuplicatesFromTxtFile = CheckIsDuplicate(recordModel);
-                    recordModel.RecordState = isDuplicatesFromTxtFile ? RecordState.Duplicate : RecordState.Normal;
-                }
-
-                var recordsWithoutDuplicates = Records.Where(x => x.RecordState != RecordState.Duplicate);
-                var laptopsDtos = MapRecordsToLaptopsDto(recordsWithoutDuplicates);
+                var laptopsDtos = Mapper.MapRecordsToLaptopsDto(Records);
 
                 LaptopsDataAccess.AddLaptops(laptopsDtos);
 
-                MessageBox.Show("Pomyślnie zapisano dane - jeśli istniały nowe unikalne rekody.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Pomyślnie zapisano dane.", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        private IEnumerable<RecordModel> MapLaptopsDtoToRecords(IEnumerable<LaptopsDto> laptopsDtos)
+        private List<RecordModel> GetValidatedData(IEnumerable<LaptopsDto> laptopsList, List<KeyValuePair<LaptopsDto, int>> duplicated)
         {
-            var record = new List<RecordModel>();
+            List<RecordModel> recordModels = new List<RecordModel>();
 
-            foreach (var laptopsDto in laptopsDtos)
+            foreach (var record in laptopsList)
             {
-                record.Add(new RecordModel
-                {
-                    ScreenDiagonal = laptopsDto.ScreenDiagonal,
-                    Resolution = laptopsDto.Resolution,
-                    ManufacturerName = laptopsDto.ManufacturerName,
-                    DiskType = laptopsDto.DiskType,
-                    DiskSize = laptopsDto.DiskSize,
-                    Vram = laptopsDto.Vram,
-                    Ram = laptopsDto.Ram,
-                    Drive = laptopsDto.Drive,
-                    Gpu = laptopsDto.Gpu,
-                    Os = laptopsDto.Os,
-                    ProcessorName = laptopsDto.ProcessorName,
-                    ScreenSurfaceType = laptopsDto.ScreenSurfaceType,
-                    IsTouchable = laptopsDto.IsTouchable,
-                    Frequency = laptopsDto.Frequency,
-                    NumberOfPhysicalCores = laptopsDto.NumberOfPhysicalCores
-                });
+                var isDuplicate = duplicated.FirstOrDefault(x => Equals(x.Key, record)).Value > 1;
+
+                var currentRecordModel = Mapper.MapLaptopDtoToRecord(record);
+
+                currentRecordModel.RecordState = isDuplicate ? RecordState.Duplicate : RecordState.Normal;
+                currentRecordModel.RecordColor = AssignBackgroundColor(currentRecordModel.RecordState);
+
+                recordModels.Add(currentRecordModel);
             }
 
-            return record;
-        }
-
-        private IEnumerable<LaptopsDto> MapRecordsToLaptopsDto(IEnumerable<RecordModel> recordModels)
-        {
-            var laptopsDtos = new List<LaptopsDto>();
-
-            foreach (var recordModel in recordModels)
-            {
-                laptopsDtos.Add(new LaptopsDto
-                {
-                    ScreenDiagonal = recordModel.ScreenDiagonal,
-                    Resolution = recordModel.Resolution,
-                    ManufacturerName = recordModel.ManufacturerName,
-                    DiskType = recordModel.DiskType,
-                    DiskSize = recordModel.DiskSize,
-                    Vram = recordModel.Vram,
-                    Ram = recordModel.Ram,
-                    Drive = recordModel.Drive,
-                    Gpu = recordModel.Gpu,
-                    Os = recordModel.Os,
-                    ProcessorName = recordModel.ProcessorName,
-                    ScreenSurfaceType = recordModel.ScreenSurfaceType,
-                    IsTouchable = recordModel.IsTouchable,
-                    Frequency = recordModel.Frequency,
-                    NumberOfPhysicalCores = recordModel.NumberOfPhysicalCores
-                });
-            }
-
-            return laptopsDtos;
-        }
-
-        private Laptops MapRecordToLaptops(BindableCollection<RecordModel> recordModels)
-        {
-            var laptops = new Laptops { ModDate = DateTime.Now.ToString(), LaptopsCollection = new List<Laptop>() };
-
-            foreach (var recordModel in recordModels.Select((value, i) => new { i, value }))
-            {
-                laptops.LaptopsCollection.Add(new Laptop
-                {
-                    Disc = new Disc
-                    {
-                        Storage = recordModel.value.DiskSize,
-                        Type = recordModel.value.DiskType
-                    },
-                    DiscReader = recordModel.value.Drive,
-                    GraphicCard = new GraphicCard
-                    {
-                        Memory = recordModel.value.Vram,
-                        Name = recordModel.value.Gpu
-                    },
-                    Id = recordModel.i + 1,
-                    Manufacturer = recordModel.value.ManufacturerName,
-                    Os = recordModel.value.Os,
-                    Processor = new Processor
-                    {
-                        PhysicalCores = recordModel.value.NumberOfPhysicalCores,
-                        PhysicalCoresAsText = recordModel.value.NumberOfPhysicalCores?.ToString(),
-                        ClockSpeed = recordModel.value.Frequency,
-                        ClockSpeedAsText = recordModel.value.Frequency?.ToString(),
-                        Name = recordModel.value.ProcessorName
-                    },
-                    Ram = recordModel.value.Ram,
-                    Screen = new IntegracjaSystemowProjekt.Models.Screen
-                    {
-                        IsTouchable = ParseBoolToXmlString(recordModel.value.IsTouchable),
-                        Resolution = recordModel.value.Resolution,
-                        Size = recordModel.value.ScreenDiagonal,
-                        Type = recordModel.value.ScreenSurfaceType
-                    }
-                });
-            }
-
-            return laptops;
+            return recordModels;
         }
 
         private IEnumerable<Record> LoadDefaultData()
@@ -510,11 +327,6 @@ namespace IntegracjaSystemowProjekt.WPF.ViewModels
             var records = DataAccess.GetDefaultTxtFileData();
 
             return records;
-        }
-
-        private string ParseBoolToXmlString(bool value)
-        {
-            return value ? "yes" : "false";
         }
     }
 }
