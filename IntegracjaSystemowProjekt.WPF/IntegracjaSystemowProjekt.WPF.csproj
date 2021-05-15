@@ -56,6 +56,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -130,6 +131,10 @@
     <ProjectReference Include="..\ISP.DatabaseAccess\ISP.DatabaseAccess.csproj">
       <Project>{a877f0e3-c2a5-42d5-aef4-723ebebcfe01}</Project>
       <Name>ISP.DatabaseAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ISP.WCF\ISP.WCF.csproj">
+      <Project>{578d0199-5781-4793-8598-3156f65c3adb}</Project>
+      <Name>ISP.WCF</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

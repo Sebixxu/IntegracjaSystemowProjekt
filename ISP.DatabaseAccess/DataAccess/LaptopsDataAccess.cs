@@ -7,6 +7,48 @@ namespace ISP.DatabaseAccess.DataAccess
     {
         protected static LaptopDbContext Context = new LaptopDbContext();
 
+        public IEnumerable<string> GetDistinctManufacturerNameFromLaptops()
+        {
+            var manufacturerNameDistinctList = Context.Laptops.Select(x => x.ManufacturerName).Distinct().ToList();
+
+            return manufacturerNameDistinctList;
+        }
+
+        public IEnumerable<string> GetDistinctScreenSurfaceTypeFromLaptops()
+        {
+            var screenSurfaceTypeDistinctList = Context.Laptops.Select(x => x.ScreenSurfaceType).Distinct().ToList();
+
+            return screenSurfaceTypeDistinctList;
+        }
+
+        public IEnumerable<string> GetDistinctResolutionFromLaptops()
+        {
+            var resolutionDistinctList = Context.Laptops.Select(x => x.Resolution).Distinct().ToList();
+
+            return resolutionDistinctList;
+        }
+
+        public IEnumerable<LaptopsDto> GetLaptopsByScreenTypes(IEnumerable<string> screenTypes)
+        {
+            var laptopsDto = Context.Laptops.Where(x => screenTypes.Contains(x.ScreenSurfaceType)).ToList();
+
+            return laptopsDto;
+        }
+
+        public IEnumerable<LaptopsDto> GetLaptopsByResolutions(IEnumerable<string> resolutions)
+        {
+            var laptopsDto = Context.Laptops.Where(x => resolutions.Contains(x.Resolution)).ToList();
+
+            return laptopsDto;
+        }
+
+        public IEnumerable<LaptopsDto> GetLaptopsByManufacturers(IEnumerable<string> manufacturerName)
+        {
+            var laptopsDto = Context.Laptops.Where(x => manufacturerName.Contains(x.ManufacturerName)).ToList();
+
+            return laptopsDto;
+        }
+
         public IEnumerable<LaptopsDto> GetLaptops()
         {
             var laptopsDto = Context.Laptops;
